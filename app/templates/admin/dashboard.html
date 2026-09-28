@@ -1,0 +1,82 @@
+{% extends "admin/layout.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <p>A quick look at the current collection.</p>
+</div>
+
+<div class="admin-stat-grid">
+  <div class="admin-stat-card">
+    <i class="icon-book-open"></i>
+    <span class="admin-stat-card__value">{{ total_books }}</span>
+    <span class="admin-stat-card__label">Books in catalog</span>
+  </div>
+  <div class="admin-stat-card">
+    <i class="icon-boxes"></i>
+    <span class="admin-stat-card__value">{{ total_stock }}</span>
+    <span class="admin-stat-card__label">Copies in stock</span>
+  </div>
+  <div class="admin-stat-card">
+    <i class="icon-indian-rupee"></i>
+    <span class="admin-stat-card__value">{{ inventory_value | inr }}</span>
+    <span class="admin-stat-card__label">Inventory value</span>
+  </div>
+  <div class="admin-stat-card">
+    <i class="icon-star"></i>
+    <span class="admin-stat-card__value">{{ featured_count }}</span>
+    <span class="admin-stat-card__label">Featured</span>
+  </div>
+  <div class="admin-stat-card admin-stat-card--warn">
+    <i class="icon-alert-triangle"></i>
+    <span class="admin-stat-card__value">{{ out_of_stock_count }}</span>
+    <span class="admin-stat-card__label">Out of stock</span>
+  </div>
+</div>
+
+<div class="admin-panel-grid">
+  <section class="admin-panel">
+    <div class="admin-panel__header">
+      <h2>Low stock</h2>
+      <a href="{{ url_for('admin.inventory', stock='low') }}" class="section__link">See all <i class="icon-arrow-right"></i></a>
+    </div>
+    {% if low_stock %}
+      <ul class="admin-list">
+        {% for book in low_stock %}
+          <li class="admin-list__row">
+            <span class="admin-list__title">{{ book.title }}</span>
+            <span class="badge badge--muted">{{ book.stock }} left</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="admin-panel__empty">Nothing running low right now.</p>
+    {% endif %}
+  </section>
+
+  <section class="admin-panel">
+    <div class="admin-panel__header">
+      <h2>Recently added</h2>
+      <a href="{{ url_for('admin.books') }}" class="section__link">See all <i class="icon-arrow-right"></i></a>
+    </div>
+    {% if recent_books %}
+      <ul class="admin-list">
+        {% for book in recent_books %}
+          <li class="admin-list__row">
+            <span class="admin-list__title">{{ book.title }}</span>
+            <span class="admin-list__meta">{{ book.price | inr }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="admin-panel__empty">No books yet.</p>
+    {% endif %}
+  </section>
+</div>
+
+<div class="admin-quick-actions">
+  <a href="{{ url_for('admin.book_import_search') }}" class="btn btn--primary"><i class="icon-download"></i> Import a book</a>
+  <a href="{{ url_for('admin.book_new') }}" class="btn btn--ghost-light" style="color:var(--color-primary);border-color:var(--color-border);"><i class="icon-plus"></i> Add a book manually</a>
+  <a href="{{ url_for('admin.inventory') }}" class="btn btn--ghost-light" style="color:var(--color-primary);border-color:var(--color-border);"><i class="icon-boxes"></i> Manage inventory</a>
+</div>
+{% endblock %}

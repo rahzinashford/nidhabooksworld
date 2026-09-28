@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>{% block title %}{{ store_name }}{% endblock %} &mdash; {{ store_tagline }}</title>
+  <meta name="description" content="{{ store_tagline }} Browse our collection and order books for delivery on WhatsApp." />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/lucide-static@latest/font/lucide.css">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+  <header class="site-header">
+    <a class="site-header__brand" href="{{ url_for('main.home') }}">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="" class="site-header__logo" />
+      <img src="{{ url_for('static', filename='images/header-name.png') }}" alt="{{ store_name }}" class="site-header__name" />
+    </a>
+    <nav class="site-header__nav">
+      <a href="{{ url_for('main.home') }}" class="{{ 'is-active' if request.path == url_for('main.home') else '' }}">Home</a>
+      <a href="{{ url_for('main.browse') }}" class="{{ 'is-active' if request.path == url_for('main.browse') else '' }}">Browse</a>
+      <a href="{{ url_for('main.cart') }}" class="{{ 'is-active' if request.path.startswith('/cart') or request.path.startswith('/checkout') or request.path.startswith('/order/') else '' }}">Cart{% if cart_count %} ({{ cart_count }}){% endif %}</a>
+      <a href="{{ url_for('main.about') }}" class="{{ 'is-active' if request.path == url_for('main.about') else '' }}">About</a>
+    </nav>
+  </header>
+
+  <main class="site-main">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack" aria-live="polite">
+          {% for category, message in messages %}
+            <div class="flash flash--{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__brand">
+        <span class="site-footer__name">{{ store_name }}</span>
+        <p class="site-footer__tagline">{{ store_tagline }}</p>
+      </div>
+      <div class="site-footer__details">
+        <p><i class="icon-truck"></i> {{ delivery_info }}</p>
+      </div>
+    </div>
+    <p class="site-footer__copyright">&copy; <span id="footer-year"></span> {{ store_name }}. Every book has a next chapter.</p>
+  </footer>
+
+  <nav class="tab-bar" aria-label="Primary">
+    <a href="{{ url_for('main.home') }}" class="tab-bar__item {{ 'is-active' if request.path == url_for('main.home') else '' }}">
+      <i class="icon-house"></i><span>Home</span>
+    </a>
+    <a href="{{ url_for('main.browse') }}" class="tab-bar__item {{ 'is-active' if request.path == url_for('main.browse') else '' }}">
+      <i class="icon-library-big"></i><span>Browse</span>
+    </a>
+    <a href="{{ url_for('main.cart') }}" class="tab-bar__item {{ 'is-active' if request.path.startswith('/cart') or request.path.startswith('/checkout') or request.path.startswith('/order/') else '' }}">
+      <i class="icon-shopping-bag"></i><span>Cart{% if cart_count %} ({{ cart_count }}){% endif %}</span>
+    </a>
+    <a href="https://wa.me/{{ whatsapp_number }}" target="_blank" rel="noopener" class="tab-bar__item">
+      <i class="icon-message-circle"></i><span>WhatsApp</span>
+    </a>
+    <a href="{{ url_for('main.about') }}" class="tab-bar__item {{ 'is-active' if request.path == url_for('main.about') else '' }}">
+      <i class="icon-info"></i><span>About</span>
+    </a>
+  </nav>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}" type="module"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

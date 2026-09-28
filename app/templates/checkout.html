@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+{% block body_class %}page-checkout{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <p class="section-eyebrow">Almost there</p>
+  <h1>Delivery details</h1>
+  <p>Tell us where to send your books. No account or sign-in is needed.</p>
+</section>
+
+<div class="checkout-layout">
+  <form method="post" action="{{ url_for('main.checkout') }}" class="checkout-form">
+    <div class="checkout-form__header">
+      <p class="section-eyebrow">Contact information</p>
+      <h2>Where should we deliver?</h2>
+    </div>
+    {% if errors %}
+      <div class="form-errors" role="alert">
+        {% for error in errors %}<p>{{ error }}</p>{% endfor %}
+      </div>
+    {% endif %}
+    <label for="name">Your name</label>
+    <input id="name" name="name" type="text" value="{{ contact.get('name', '') }}" autocomplete="name" maxlength="120" required />
+
+    <label for="phone">Phone number</label>
+    <input id="phone" name="phone" type="tel" value="{{ contact.get('phone', '') }}" autocomplete="tel" maxlength="40" required />
+
+    <label for="address">Delivery address</label>
+    <textarea id="address" name="address" rows="5" autocomplete="street-address" maxlength="500" required>{{ contact.get('address', '') }}</textarea>
+
+    <div class="checkout-form__notice">
+      <i class="icon-info"></i>
+      <p>Delivery charges will be shared and confirmed with you through WhatsApp after the order is placed.</p>
+    </div>
+    <button type="submit" class="btn btn--accent btn--lg btn--block">Review your order <i class="icon-arrow-right"></i></button>
+  </form>
+
+  <aside class="checkout-summary">
+    <p class="section-eyebrow">Your books</p>
+    <h2>{{ item_count }} book{{ '' if item_count == 1 else 's' }}</h2>
+    {% for line in lines %}
+      <div class="checkout-summary__line">
+        <span>{{ line.book.title }} <small>&times; {{ line.quantity }}</small></span>
+        <strong>{{ line.line_total|inr }}</strong>
+      </div>
+    {% endfor %}
+    <div class="checkout-summary__total">
+      <span>Books subtotal</span>
+      <strong>{{ subtotal|inr }}</strong>
+    </div>
+    <a href="{{ url_for('main.cart') }}" class="checkout-summary__edit"><i class="icon-arrow-left"></i> Edit cart</a>
+  </aside>
+</div>
+{% endblock %}

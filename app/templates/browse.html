@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "partials/_macros.html" import search_input %}
+{% block title %}Browse the collection{% endblock %}
+{% block body_class %}page-browse{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <h1>Browse the collection</h1>
+  <p>{{ books|length }} book{{ '' if books|length == 1 else 's' }} available to order.</p>
+</section>
+
+<form class="filter-bar" method="get" action="{{ url_for('main.browse') }}">
+  {{ search_input('book-search', 'Search title, author, ISBN, category\u2026', active_search, 'filter-bar__search') }}
+  <div class="filter-bar__selects">
+    <select name="genre" aria-label="Filter by shelf">
+      <option value="">All shelves</option>
+      {% for genre in genres %}
+        <option value="{{ genre }}" {{ 'selected' if genre == active_genre else '' }}>{{ genre }}</option>
+      {% endfor %}
+    </select>
+    <select name="condition" aria-label="Filter by condition">
+      <option value="">Any condition</option>
+      {% for condition in conditions %}
+        <option value="{{ condition }}" {{ 'selected' if condition == active_condition else '' }}>{{ condition }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn--primary">Apply</button>
+  </div>
+</form>
+
+<section id="book-results">
+  {% if books %}
+    <div class="book-grid">
+      {% for book in books %}
+        {% include "partials/book_card.html" %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="icon-book-x"></i>
+      <p>No books match yet &mdash; try a different shelf or search term.</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Confirm your order{% endblock %}
+{% block body_class %}page-confirmation{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <p class="section-eyebrow">Final review</p>
+  <h1>Confirm your order</h1>
+  <p>Check the details below, then send the order to us on WhatsApp.</p>
+</section>
+
+<div class="confirmation-layout">
+  <section class="confirmation-card confirmation-card--details">
+    <p class="section-eyebrow">Deliver to</p>
+    <h2>{{ contact.name }}</h2>
+    <p class="confirmation-card__phone">{{ contact.phone }}</p>
+    <p class="confirmation-card__address">{{ contact.address }}</p>
+    <a href="{{ url_for('main.checkout') }}" class="checkout-summary__edit"><i class="icon-pencil"></i> Edit contact details</a>
+  </section>
+
+  <section class="confirmation-card">
+    <p class="section-eyebrow">Your books</p>
+    <h2>{{ item_count }} book{{ '' if item_count == 1 else 's' }}</h2>
+    <div class="confirmation-lines">
+      {% for line in lines %}
+        <div class="confirmation-line">
+          <div>
+            <strong>{{ line.book.title }}</strong>
+            <span>by {{ line.book.author }} &middot; Qty {{ line.quantity }}</span>
+          </div>
+          <strong>{{ line.line_total|inr }}</strong>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="confirmation-total">
+      <span>Books subtotal</span>
+      <strong>{{ subtotal|inr }}</strong>
+    </div>
+    <div class="checkout-form__notice">
+      <i class="icon-truck"></i>
+      <p>Delivery charges will be confirmed separately in WhatsApp. The amount above is the books subtotal before delivery.</p>
+    </div>
+    <form method="post" action="{{ url_for('main.order_place') }}">
+      <button type="submit" class="btn btn--accent btn--lg btn--block"><i class="icon-message-circle"></i> Place order on WhatsApp</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

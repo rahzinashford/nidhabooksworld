@@ -1,0 +1,8 @@
+STREET_BOOKS_AUDIT.md
+instance/*.json
+/git
+.env
+.env.*
+!.env.example
+*.db-wal
+*.db-shm

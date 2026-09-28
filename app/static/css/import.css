@@ -1,0 +1,255 @@
+/* Book Import page — JS-driven flow styles.
+   Builds on the existing admin design tokens from variables.css. */
+
+/* ── Search bar ──────────────────────────────────────────────────── */
+.import-search-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.import-search-field {
+  flex: 1;
+  min-width: 240px;
+  margin-bottom: 0;
+}
+
+.import-search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.import-search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  font-size: 1rem;
+}
+
+.import-search-field input[type="search"] {
+  width: 100%;
+  padding: 10px 12px 10px 38px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+
+.import-search-field input[type="search"]:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* ── Source tabs ───────────────────────────────────────────────────── */
+.import-source-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin: calc(var(--space-3) * -1) 0 var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.import-source-tabs__label {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  margin-right: var(--space-1);
+}
+
+.import-source-tab {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-white);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  padding: 7px 13px;
+}
+
+.import-source-tab:hover,
+.import-source-tab.is-active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+/* ── Status / loading ─────────────────────────────────────────────── */
+.import-status {
+  margin-bottom: var(--space-4);
+}
+
+.import-spinner-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
+  padding: 8px 0;
+}
+
+.import-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: import-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+.import-spinner--sm {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+@keyframes import-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Candidate cards ──────────────────────────────────────────────── */
+/* (Most card styles already live in admin.css; these are additions.) */
+
+.import-use-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ── Preview grid ────────────────────────────────────────────────── */
+.import-preview-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .import-preview-grid {
+    grid-template-columns: 1.6fr 1fr;
+  }
+}
+
+/* ── Inventory form panel ─────────────────────────────────────────── */
+.import-inventory-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.import-inventory-form__heading {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: 1.1rem;
+  margin: 0 0 var(--space-1);
+}
+
+/* ── Success banner ───────────────────────────────────────────────── */
+.import-success-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  background: rgba(65, 83, 59, 0.1);
+  color: var(--color-forest);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.import-success-banner i {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.import-success-banner > span {
+  flex: 1;
+}
+
+.import-success-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* ── Duplicate modal ─────────────────────────────────────────────── */
+.import-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+}
+
+.import-modal-overlay[hidden] {
+  display: none;
+}
+
+.import-modal {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-6) var(--space-5);
+  max-width: 460px;
+  width: 100%;
+}
+
+.import-modal__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.15rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-3);
+}
+
+.import-modal__title i {
+  color: var(--color-accent);
+}
+
+.import-modal__body {
+  color: var(--color-text);
+  font-size: 0.93rem;
+  line-height: 1.55;
+  margin-bottom: 0;
+}
+
+/* ── Candidate card publisher line ───────────────────────────────── */
+.admin-import-candidate__isbn {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+/* ── Screen reader only ──────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Button size variant ─────────────────────────────────────────── */
+.btn--sm {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}

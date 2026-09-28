@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Your cart{% endblock %}
+{% block body_class %}page-cart{% endblock %}
+
+{% block content %}
+<section class="page-header page-header--split">
+  <div>
+    <p class="section-eyebrow">Your selection</p>
+    <h1>Your cart</h1>
+    <p>{{ item_count }} book{{ '' if item_count == 1 else 's' }} ready for checkout.</p>
+  </div>
+  <a href="{{ url_for('main.browse') }}" class="btn btn--ghost">Continue shopping</a>
+</section>
+
+{% if lines %}
+  <form method="post" action="{{ url_for('main.cart_update') }}" class="cart-layout">
+    <section class="cart-list" aria-label="Books in your cart">
+      {% for line in lines %}
+        <article class="cart-line">
+          <a href="{{ url_for('main.book_detail', book_id=line.book.id) }}" class="cart-line__cover">
+            <img src="{{ cover_url(line.book.cover_image) }}" alt="Cover of {{ line.book.title }}" />
+          </a>
+          <div class="cart-line__details">
+            <p class="cart-line__genre">{{ line.book.genre }}</p>
+            <h2><a href="{{ url_for('main.book_detail', book_id=line.book.id) }}">{{ line.book.title }}</a></h2>
+            <p class="cart-line__author">by {{ line.book.author }}</p>
+            <p class="cart-line__unit-price">{{ line.book.price|inr }} each</p>
+          </div>
+          <div class="cart-line__controls">
+            <label for="quantity-{{ line.book.id }}">Qty</label>
+            <input id="quantity-{{ line.book.id }}" name="quantity_{{ line.book.id }}" type="number" min="0" max="{{ line.book.stock }}" value="{{ line.quantity }}" />
+            <button type="submit" class="cart-line__remove" name="remove_id" value="{{ line.book.id }}">Remove</button>
+          </div>
+          <p class="cart-line__total">{{ line.line_total|inr }}</p>
+        </article>
+      {% endfor %}
+      <button type="submit" class="btn btn--primary">Update cart</button>
+    </section>
+
+    <aside class="cart-summary">
+      <p class="section-eyebrow">Order summary</p>
+      <h2>Ready when you are</h2>
+      <div class="cart-summary__row">
+        <span>Books subtotal</span>
+        <strong>{{ subtotal|inr }}</strong>
+      </div>
+      <div class="cart-summary__notice">
+        <i class="icon-truck"></i>
+        <p>Delivery charges are not included. They will be confirmed with you on WhatsApp after you place the order.</p>
+      </div>
+      <a href="{{ url_for('main.checkout') }}" class="btn btn--accent btn--lg btn--block">Continue to checkout <i class="icon-arrow-right"></i></a>
+    </aside>
+  </form>
+{% else %}
+  <section class="empty-state empty-state--card">
+    <i class="icon-shopping-bag"></i>
+    <h2>Your cart is waiting</h2>
+    <p>Browse the collection and save the books you would like delivered.</p>
+    <a href="{{ url_for('main.browse') }}" class="btn btn--accent btn--lg">Browse books</a>
+  </section>
+{% endif %}
+{% endblock %}

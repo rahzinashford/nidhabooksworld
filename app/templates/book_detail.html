@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }}{% endblock %}
+{% block body_class %}page-book{% endblock %}
+
+{% block content %}
+<section class="book-detail">
+  <a href="{{ url_for('main.browse') }}" class="back-link"><i class="icon-arrow-left"></i> Back to the collection</a>
+
+  <div class="book-detail__grid">
+    <div class="book-detail__cover">
+      <img src="{{ cover_url(book.cover_image) }}" alt="Cover of {{ book.title }}" />
+      {% if not book.in_stock %}<span class="badge badge--muted">Unavailable</span>{% endif %}
+    </div>
+
+    <div class="book-detail__info">
+      <p class="book-detail__genre">{{ book.genre }}</p>
+      <h1 class="book-detail__title">{{ book.title }}</h1>
+      <p class="book-detail__author">by {{ book.author }}</p>
+
+      <div class="book-detail__meta">
+        <span class="book-detail__price">{{ book.price|inr }}</span>
+        <span class="badge">Used &bull; {{ book.condition }}</span>
+      </div>
+
+      <p class="book-detail__stock {{ 'book-detail__stock--out' if not book.in_stock }}">
+        {% if book.in_stock %}
+          <i class="icon-package"></i> Stock: {{ book.stock }}
+        {% else %}
+          <i class="icon-package-x"></i> Out of stock
+        {% endif %}
+      </p>
+
+      <hr class="divider" />
+
+      <h2 class="book-detail__section-title">Description</h2>
+      <p class="book-detail__description">{{ book.description }}</p>
+
+      <hr class="divider" />
+
+      <dl class="book-detail__specs">
+        <div class="book-detail__spec">
+          <dt>Publisher</dt>
+          <dd>{{ book.publisher }}</dd>
+        </div>
+        <div class="book-detail__spec">
+          <dt>ISBN</dt>
+          <dd>{{ book.isbn }}</dd>
+        </div>
+        <div class="book-detail__spec">
+          <dt>Pages</dt>
+          <dd>{{ book.pages }}</dd>
+        </div>
+        <div class="book-detail__spec">
+          <dt>Language</dt>
+          <dd>{{ book.language }}</dd>
+        </div>
+      </dl>
+
+      {% if book.preview_link %}
+        <a
+          href="{{ book.preview_link }}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="book-detail__catalog-link"
+        >
+          <i class="icon-external-link"></i> View catalog details
+        </a>
+      {% endif %}
+
+      <hr class="divider" />
+
+      {% if book.in_stock %}
+        <div class="book-detail__order-actions">
+          <form method="post" action="{{ url_for('main.cart_add', book_id=book.id) }}">
+            <button type="submit" class="btn btn--accent btn--lg btn--block">
+              <i class="icon-shopping-bag"></i> Add to cart
+            </button>
+          </form>
+          <a
+            href="https://wa.me/{{ whatsapp_number }}?text={{ book.whatsapp_message() | urlencode }}"
+            target="_blank"
+            rel="noopener"
+            class="btn btn--primary btn--lg btn--block"
+          >
+            <i class="icon-message-circle"></i> Order directly
+          </a>
+        </div>
+        <p class="book-detail__hint">Delivery charges are confirmed separately on WhatsApp.</p>
+      {% else %}
+        <button class="btn btn--disabled btn--lg btn--block" disabled>Currently unavailable</button>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if related %}
+<section class="section">
+  <div class="section__heading">
+    <div>
+      <h2>You may also enjoy</h2>
+      <p class="section__subtitle">{{ related|length }} similar book{{ '' if related|length == 1 else 's' }}</p>
+    </div>
+  </div>
+  <div class="book-scroller">
+    {% for book in related %}
+      {% include "partials/book_card.html" %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

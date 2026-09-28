@@ -1,0 +1,6 @@
+flask
+flask-sqlalchemy
+gunicorn
+requests
+gspread
+google-auth

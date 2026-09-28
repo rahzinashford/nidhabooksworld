@@ -1,0 +1,45 @@
+/* Design tokens for Nidha Books World — warm old-library aesthetic. */
+:root {
+  /* Palette */
+  --color-bg: #f4efe6;
+  --color-surface: #e9ddc8;
+  --color-primary: #3a2c23;
+  --color-secondary: #5a4334;
+  --color-accent: #c5a46d;
+  --color-forest: #41533b;
+  --color-burgundy: #6a2737;
+  --color-text: #2d241c;
+  --color-text-muted: #6b5c4d;
+  --color-white: #fffaf1;
+  --color-border: rgba(58, 44, 35, 0.14);
+
+  /* Typography */
+  --font-heading: "Cormorant Garamond", serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Radius & shadow */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --shadow-sm: 0 2px 8px rgba(45, 36, 28, 0.08);
+  --shadow-md: 0 8px 24px rgba(45, 36, 28, 0.14);
+  --shadow-lg: 0 18px 48px rgba(45, 36, 28, 0.2);
+
+  /* Layout */
+  --header-height: 64px;
+  --tabbar-height: 68px;
+  --content-max: 1120px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-fast: 160ms var(--ease);
+  --transition-med: 280ms var(--ease);
+}

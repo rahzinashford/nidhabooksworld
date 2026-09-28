@@ -1,0 +1,13 @@
+<article class="book-card">
+  <a href="{{ url_for('main.book_detail', book_id=book.id) }}" class="book-card__link">
+    <div class="book-card__cover">
+      <img src="{{ cover_url(book.cover_image) }}" alt="Cover of {{ book.title }}" loading="lazy" width="240" height="240" />
+      <span class="book-card__condition">{{ book.condition }}</span>
+    </div>
+    <div class="book-card__body">
+      <h3 class="book-card__title">{{ book.title }}</h3>
+      <p class="book-card__author">{{ book.author }}</p>
+      <p class="book-card__price">{{ book.price|inr }}</p>
+    </div>
+  </a>
+</article>

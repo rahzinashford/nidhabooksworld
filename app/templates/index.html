@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% from "partials/_macros.html" import search_input %}
+{% block title %}{{ store_name }}{% endblock %}
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__media">
+    <img src="{{ url_for('static', filename='images/hero.jpg') }}" alt="{{ store_name }} shelves at dusk" loading="eager" />
+    <div class="hero__scrim"></div>
+  </div>
+  <div class="hero__content">
+    <p class="hero__eyebrow"><i class="icon-book-open"></i> Travelling bookseller</p>
+    <h1 class="hero__title">{{ store_name }}</h1>
+    <p class="hero__tagline">{{ store_tagline }}. Every spine has a past owner &mdash; and, if you like, a next one.</p>
+    <div class="hero__actions">
+      <a href="{{ url_for('main.browse') }}" class="btn btn--accent btn--lg">Browse the collection</a>
+      <a href="#delivery-info" class="btn btn--ghost-light btn--lg">
+        <i class="icon-truck"></i> How delivery works
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="search-hero">
+  <div class="search-hero__inner">
+    <p class="section-eyebrow section-eyebrow--center">Card Catalog</p>
+    <h2 class="search-hero__title">What are you looking for?</h2>
+    <p class="search-hero__hint">Search by title, author, ISBN, category, or publisher.</p>
+    <form class="search-box" action="{{ url_for('main.browse') }}" method="get" role="search">
+      {{ search_input('home-search', 'Try \u201cHarry Potter\u201d, an author, or an ISBN\u2026', '', 'search-box__field') }}
+      <button type="submit" class="btn btn--accent btn--lg">Search</button>
+    </form>
+    <div class="search-hero__quick">
+      <span>Or try:</span>
+      <a href="{{ url_for('main.browse', q='poetry') }}">Poetry</a>
+      <a href="{{ url_for('main.browse', condition='Like New') }}">Like New</a>
+      <a href="{{ url_for('main.browse', q='essays') }}">Essays</a>
+      <a href="{{ url_for('main.browse') }}">Everything</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__heading">
+    <div>
+      <p class="section-eyebrow">Available now</p>
+      <h2>Featured Books</h2>
+    </div>
+    <a href="{{ url_for('main.browse') }}" class="section__link">See all <i class="icon-arrow-right"></i></a>
+  </div>
+  {% if featured %}
+    <div class="book-scroller">
+      {% for book in featured %}
+        {% include "partials/book_card.html" %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="section__subtitle">Nothing pinned as a favourite just yet &mdash; browse the full collection below.</p>
+  {% endif %}
+</section>
+
+<section class="section section--muted">
+  <div class="section__heading">
+    <div>
+      <p class="section-eyebrow">Recently added</p>
+      <h2>Fresh arrivals</h2>
+    </div>
+    <a href="{{ url_for('main.browse') }}" class="section__link">See all <i class="icon-arrow-right"></i></a>
+  </div>
+  {% if recent %}
+    <div class="book-grid">
+      {% for book in recent %}
+        {% include "partials/book_card.html" %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="section__subtitle">The collection is being updated &mdash; check back soon.</p>
+  {% endif %}
+</section>
+
+<section class="section">
+  <div class="section__heading">
+    <div>
+      <p class="section-eyebrow">The drawers</p>
+      <h2>Browse by Category</h2>
+    </div>
+  </div>
+  {% if categories %}
+    <div class="drawer-grid">
+      {% for category in categories %}
+        <a class="drawer-card" href="{{ url_for('main.browse', genre=category.name) }}">
+          <span class="drawer-card__pull"></span>
+          <span class="drawer-card__label">{{ category.name }}</span>
+          <span class="drawer-card__count">{{ category.count }} book{{ 's' if category.count != 1 else '' }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% if genres %}
+    <div class="genre-grid genre-grid--secondary">
+      {% for genre in genres if not categories or genre not in categories|map(attribute='name')|list %}
+        <a class="genre-chip" href="{{ url_for('main.browse', genre=genre) }}">{{ genre }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
+<section class="callout" id="delivery-info">
+  <div class="callout__inner">
+    <i class="icon-truck callout__icon"></i>
+    <p class="section-eyebrow section-eyebrow--center section-eyebrow--light">Delivery available</p>
+    <h2>Books that come to you</h2>
+    <p>{{ delivery_info }}</p>
+    <a href="https://wa.me/{{ whatsapp_number }}" target="_blank" rel="noopener" class="btn btn--accent">
+      <i class="icon-message-circle"></i> Chat with us
+    </a>
+  </div>
+</section>
+
+<section class="section about-teaser">
+  <div class="about-teaser__media">
+    <img src="{{ url_for('static', filename='images/about.jpg') }}" alt="Hands arranging old books for delivery" loading="lazy" />
+  </div>
+  <div class="about-teaser__body">
+    <p class="section-eyebrow">Our story</p>
+    <h2>About {{ store_name }}</h2>
+    <p>
+      {{ store_name }} started as a single crate of paperbacks on a folding
+      table. Today we travel with a carefully chosen collection, stocked with
+      whatever has found its way into our hands &mdash; secondhand novels,
+      forgotten poetry, essays with someone else's notes still in the
+      margins.
+    </p>
+    <p>
+      No complicated checkout. If something catches your eye, message us on
+      WhatsApp, confirm your order, and we will arrange delivery.
+    </p>
+    <a href="{{ url_for('main.about') }}" class="section__link">Read our story <i class="icon-arrow-right"></i></a>
+  </div>
+</section>
+{% endblock %}

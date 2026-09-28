@@ -1,0 +1,127 @@
+{% extends "admin/layout.html" %}
+{% block title %}{{ 'Edit book' if book else 'Add book' }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <a href="{{ url_for('admin.books') }}" class="admin-back-link"><i class="icon-arrow-left"></i> Back to books</a>
+  <h1>{{ 'Edit book' if book else 'Add a book' }}</h1>
+</div>
+
+<form method="post" class="admin-form admin-form--wide">
+  <div class="admin-form-grid">
+    <fieldset class="admin-fieldset">
+      <legend>Catalog details</legend>
+
+      <label class="admin-field">
+        <span>Title</span>
+        <input type="text" name="title" value="{{ book.title if book else '' }}" required />
+      </label>
+
+      <label class="admin-field">
+        <span>Author</span>
+        <input type="text" name="author" value="{{ book.author if book else '' }}" required />
+      </label>
+
+      <div class="admin-field-row">
+        <label class="admin-field">
+          <span>ISBN</span>
+          <input type="text" name="isbn" value="{{ book.isbn if book else '' }}" />
+        </label>
+        <label class="admin-field">
+          <span>Publisher</span>
+          <input type="text" name="publisher" value="{{ book.publisher if book else '' }}" />
+        </label>
+      </div>
+
+      <div class="admin-field-row">
+        <label class="admin-field">
+          <span>Pages</span>
+          <input type="number" name="pages" min="1" value="{{ book.pages if book and book.pages else '' }}" />
+        </label>
+        <label class="admin-field">
+          <span>Language</span>
+          <input type="text" name="language" value="{{ book.language if book else 'English' }}" />
+        </label>
+      </div>
+
+      <label class="admin-field">
+        <span>Cover image path or URL</span>
+        <input type="text" name="cover_image" value="{{ book.cover_image if book else 'images/covers/cover-01.jpg' }}" placeholder="images/covers/cover-01.jpg or https://..." />
+      </label>
+
+      <label class="admin-field">
+        <span>Description</span>
+        <textarea name="description" rows="4">{{ book.description if book else '' }}</textarea>
+      </label>
+    </fieldset>
+
+    <fieldset class="admin-fieldset">
+      <legend>Categories &amp; shelves</legend>
+
+      <div class="admin-field">
+        <span>Categories</span>
+        <div class="admin-checkbox-grid">
+          {% for category in categories %}
+            <label class="admin-checkbox">
+              <input type="checkbox" name="category_ids" value="{{ category.id }}"
+                {{ 'checked' if book and category in book.categories else '' }} />
+              {{ category.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <label class="admin-field">
+        <span>Add new categories (comma separated)</span>
+        <input type="text" name="new_categories" placeholder="e.g. Travel, Memoir" />
+      </label>
+
+      <div class="admin-field">
+        <span>Shelves</span>
+        <div class="admin-checkbox-grid">
+          {% for shelf in shelves %}
+            <label class="admin-checkbox">
+              <input type="checkbox" name="shelf_ids" value="{{ shelf.id }}"
+                {{ 'checked' if book and shelf in book.shelves else '' }} />
+              {{ shelf.name }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="admin-fieldset">
+      <legend>Price &amp; stock</legend>
+
+      <div class="admin-field-row">
+        <label class="admin-field">
+          <span>Price (&#8377;)</span>
+          <input type="number" name="price" min="0" step="1" value="{{ book.price if book and book.price is not none else '' }}" required />
+        </label>
+        <label class="admin-field">
+          <span>Stock</span>
+          <input type="number" name="stock" min="0" step="1" value="{{ book.stock if book else 0 }}" required />
+        </label>
+      </div>
+
+      <label class="admin-field">
+        <span>Condition</span>
+        <select name="condition">
+          {% for c in conditions %}
+            <option value="{{ c }}" {{ 'selected' if book and book.condition == c else '' }}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="admin-checkbox">
+        <input type="checkbox" name="is_featured" {{ 'checked' if book and book.is_featured else '' }} />
+        Feature this book on the homepage
+      </label>
+    </fieldset>
+  </div>
+
+  <div class="admin-form-actions">
+    <button type="submit" class="btn btn--primary btn--lg">{{ 'Save changes' if book else 'Add book' }}</button>
+    <a href="{{ url_for('admin.books') }}" class="btn admin-btn-cancel">Cancel</a>
+  </div>
+</form>
+{% endblock %}

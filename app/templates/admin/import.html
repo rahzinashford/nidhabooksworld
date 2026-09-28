@@ -1,0 +1,168 @@
+{% extends "admin/layout.html" %}
+{% block title %}Import a book{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/import.css') }}" />
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <a href="{{ url_for('admin.books') }}" class="admin-back-link"><i class="icon-arrow-left"></i> Back to books</a>
+  <h1>Import a book</h1>
+  <p>Search by ISBN, title, or author &mdash; catalog details are pulled automatically. You only fill in price, stock, and condition.</p>
+</div>
+
+<noscript>
+  <div class="admin-flash admin-flash--error" style="margin-bottom:1rem">
+    JavaScript is required for the import page. Please enable it in your browser.
+  </div>
+</noscript>
+
+<!-- ── Search bar ─────────────────────────────────────────────────── -->
+<div class="import-search-bar">
+  <label class="admin-field import-search-field">
+    <span class="sr-only">ISBN, title, or author</span>
+    <div class="import-search-input-wrap">
+      <i class="icon-search import-search-icon"></i>
+      <input
+        id="import-q"
+        type="search"
+        placeholder="e.g. 9780143127550 or &ldquo;Atomic Habits&rdquo;"
+        autocomplete="off"
+        autofocus
+      />
+    </div>
+  </label>
+  <button id="import-search-btn" class="btn btn--primary btn--lg" type="button">
+    <i class="icon-search"></i> Search
+  </button>
+</div>
+
+<nav class="import-source-tabs" id="import-source-tabs" aria-label="Metadata source">
+  <span class="import-source-tabs__label">Search source:</span>
+  <button type="button" class="import-source-tab is-active" data-source="all">All sources</button>
+  <button type="button" class="import-source-tab" data-source="google_books">Google Books</button>
+  <button type="button" class="import-source-tab" data-source="open_library">OpenLibrary</button>
+  <button type="button" class="import-source-tab" data-source="library_of_congress">Library of Congress</button>
+  <button type="button" class="import-source-tab" data-source="hathitrust">HathiTrust (ISBN only)</button>
+  <button type="button" class="import-source-tab" data-source="dc_bookstore">DC Bookstore</button>
+</nav>
+
+<!-- ── Status / hint ──────────────────────────────────────────────── -->
+<div id="import-status" class="import-status" aria-live="polite" hidden></div>
+
+<!-- ── Search results ─────────────────────────────────────────────── -->
+<section id="import-results-section" hidden aria-label="Search results">
+  <div class="admin-import-source-note" id="import-source-note"></div>
+  <div id="import-results-list" class="admin-import-results"></div>
+</section>
+
+<!-- ── Preview / inventory panel ──────────────────────────────────── -->
+<section id="import-preview-section" hidden aria-label="Book preview">
+  <div class="import-preview-grid">
+
+    <!-- Left: book metadata (read-only) -->
+    <div class="admin-import-preview" id="import-preview-card">
+      <img id="prev-cover" src="" alt="" class="admin-import-preview__cover" />
+      <div class="admin-import-preview__meta">
+        <h2 id="prev-title"></h2>
+        <p class="admin-import-preview__author" id="prev-author"></p>
+        <dl class="admin-import-preview__specs" id="prev-specs"></dl>
+        <p class="admin-import-preview__description" id="prev-description"></p>
+      </div>
+    </div>
+
+    <!-- Right: inventory form -->
+    <div class="admin-fieldset import-inventory-form" id="import-inventory-form">
+      <p class="import-inventory-form__heading">You provide</p>
+
+      <div class="admin-field-row">
+        <label class="admin-field admin-field--compact">
+          <span>Price (&#8377;)</span>
+          <input id="inv-price" type="number" min="0" step="1" placeholder="e.g. 299" required />
+        </label>
+        <label class="admin-field admin-field--compact">
+          <span>Stock</span>
+          <input id="inv-stock" type="number" min="0" step="1" value="1" required />
+        </label>
+      </div>
+
+      <label class="admin-field admin-field--compact">
+        <span>Condition</span>
+        <select id="inv-condition">
+          {% for c in conditions %}
+            <option value="{{ c }}">{{ c }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label class="admin-field admin-field--compact">
+        <span>Featured?</span>
+        <label class="admin-checkbox admin-checkbox--compact">
+          <input id="inv-featured" type="checkbox" />
+          <span>Show in Featured Picks</span>
+        </label>
+      </label>
+
+      <div class="admin-form-actions">
+        <button id="import-confirm-btn" class="btn btn--primary" type="button">
+          <i class="icon-check"></i> Import book
+        </button>
+        <button id="import-back-btn" class="btn admin-btn-cancel" type="button">
+          <i class="icon-arrow-left"></i> Back to results
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Duplicate modal ────────────────────────────────────────────── -->
+<div id="duplicate-modal" class="import-modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="dup-modal-title">
+  <div class="import-modal">
+    <h3 id="dup-modal-title" class="import-modal__title">
+      <i class="icon-alert-triangle"></i> Duplicate detected
+    </h3>
+    <p id="dup-modal-body" class="import-modal__body"></p>
+
+    <div class="admin-field-row" style="margin:var(--space-3) 0">
+      <label class="admin-field admin-field--compact">
+        <span>Additional copies</span>
+        <input id="dup-stock" type="number" min="1" step="1" value="1" />
+      </label>
+      <label class="admin-field admin-field--compact">
+        <span>New price (&#8377;)</span>
+        <input id="dup-price" type="number" min="0" step="1" />
+      </label>
+    </div>
+
+    <div class="admin-form-actions">
+      <button id="dup-update-btn" class="btn btn--primary" type="button">
+        <i class="icon-plus"></i> Add to stock
+      </button>
+      <button id="dup-cancel-btn" class="btn admin-btn-cancel" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Initial hint (shown before first search) ───────────────────── -->
+<div id="import-hint" class="admin-import-hint">
+  <i class="icon-scan-line"></i>
+  <p>Try an ISBN for the most complete match, or search by title and author if you don't have one.</p>
+  <p class="admin-import-hint__sources">
+    Checks <strong>Google Books</strong>, <strong>Open Library</strong>, <strong>Library of Congress</strong>, <strong>HathiTrust</strong>, and the deeper <strong>DC Bookstore</strong> catalog.
+  </p>
+</div>
+
+<script>
+  // Pass Flask URL helper values into JS
+  window._importConfig = {
+    searchUrl:  "{{ url_for('admin.book_search_api') }}",
+    metadataUrl: "{{ url_for('admin.book_metadata_api') }}",
+    importUrl:  "{{ url_for('admin.book_import_api') }}",
+    booksUrl:   "{{ url_for('admin.books') }}",
+    defaultCover: "{{ url_for('static', filename='images/covers/cover-01.jpg') }}",
+  };
+</script>
+<script type="module" src="{{ url_for('static', filename='js/modules/bookImport.js') }}"></script>
+{% endblock %}

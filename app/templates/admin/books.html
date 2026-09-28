@@ -1,0 +1,75 @@
+{% extends "admin/layout.html" %}
+{% block title %}Books{% endblock %}
+{% block content %}
+<div class="page-header admin-page-header">
+  <div>
+    <h1>Books</h1>
+    <p>{{ books|length }} title{{ '' if books|length == 1 else 's' }} in the catalog.</p>
+  </div>
+  <div class="admin-page-header__actions">
+    <a href="{{ url_for('admin.book_import_search') }}" class="btn admin-btn-cancel"><i class="icon-download"></i> Import book</a>
+    <a href="{{ url_for('admin.book_new') }}" class="btn btn--primary"><i class="icon-plus"></i> Add book</a>
+  </div>
+</div>
+
+<form method="get" class="admin-search-bar">
+  <div class="search-suggest">
+    <i class="icon-search"></i>
+    <input type="search" name="q" placeholder="Search by title, author, or ISBN" value="{{ active_search }}" />
+  </div>
+  <button type="submit" class="btn btn--primary">Search</button>
+</form>
+
+{% if books %}
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th>Condition</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Featured</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in books %}
+      <tr>
+        <td class="admin-table__book" data-label="Book">
+          <img src="{{ cover_url(book.cover_image) }}" alt="" />
+          <div>
+            <span class="admin-table__title">{{ book.title }}</span>
+            <span class="admin-table__author">{{ book.author }}</span>
+          </div>
+        </td>
+        <td data-label="Condition"><span class="badge">{{ book.condition }}</span></td>
+        <td data-label="Price">{{ book.price | inr }}</td>
+        <td data-label="Stock">
+          <span class="badge {{ 'badge--muted' if book.stock == 0 else '' }}">{{ book.stock }}</span>
+        </td>
+        <td data-label="Featured">
+          <form method="post" action="{{ url_for('admin.book_toggle_feature', book_id=book.id) }}">
+            <button type="submit" class="admin-icon-toggle {{ 'is-active' if book.is_featured else '' }}" title="{{ 'Unfeature' if book.is_featured else 'Feature this book' }}">
+              <i class="icon-star"></i>
+            </button>
+          </form>
+        </td>
+        <td class="admin-table__actions" data-label="Actions">
+          <a href="{{ url_for('admin.book_edit', book_id=book.id) }}" class="admin-icon-link" title="Edit"><i class="icon-pencil"></i></a>
+          <form method="post" action="{{ url_for('admin.book_delete', book_id=book.id) }}" onsubmit="return confirm('Delete \'{{ book.title }}\'? This can\'t be undone.');">
+            <button type="submit" class="admin-icon-link admin-icon-link--danger" title="Delete"><i class="icon-trash-2"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <i class="icon-book-open"></i>
+  <p>No books match your search.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% macro search_input(id, placeholder, value='', extra_class='') %}
+<div class="search-suggest {{ extra_class }}" data-search-suggest>
+  <i class="icon-search"></i>
+  <input
+    type="search"
+    name="q"
+    id="{{ id }}"
+    placeholder="{{ placeholder }}"
+    value="{{ value }}"
+    autocomplete="off"
+    data-suggest-input
+  />
+  <div class="search-suggest__list" data-suggest-list hidden></div>
+</div>
+{% endmacro %}

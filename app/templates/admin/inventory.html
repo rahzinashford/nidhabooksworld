@@ -1,0 +1,75 @@
+{% extends "admin/layout.html" %}
+{% block title %}Inventory{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Inventory</h1>
+  <p>Update stock, price, condition, and featured status.</p>
+</div>
+
+<div class="admin-filter-chips">
+  <a href="{{ url_for('admin.inventory') }}" class="genre-chip {{ 'is-active' if not active_filter else '' }}">All</a>
+  <a href="{{ url_for('admin.inventory', stock='low') }}" class="genre-chip {{ 'is-active' if active_filter == 'low' else '' }}">Low stock</a>
+  <a href="{{ url_for('admin.inventory', stock='out') }}" class="genre-chip {{ 'is-active' if active_filter == 'out' else '' }}">Out of stock</a>
+</div>
+
+{% if books %}
+<div class="admin-inventory-list">
+  {% for book in books %}
+  <form method="post" action="{{ url_for('admin.inventory_update', book_id=book.id) }}" class="admin-inventory-card">
+    <img src="{{ cover_url(book.cover_image) }}" alt="" class="admin-inventory-card__cover" />
+    <div class="admin-inventory-card__body">
+      <div class="admin-inventory-card__title-row">
+        <div>
+          <span class="admin-inventory-card__title">{{ book.title }}</span>
+          <span class="admin-inventory-card__author">{{ book.author }}</span>
+        </div>
+        {% if book.stock == 0 %}
+          <span class="badge badge--muted">Out of stock</span>
+        {% elif book.stock <= 2 %}
+          <span class="badge">Low: {{ book.stock }} left</span>
+        {% endif %}
+      </div>
+
+      <div class="admin-inventory-card__fields">
+        <label class="admin-field admin-field--compact">
+          <span>Price (&#8377;)</span>
+          <input type="number" name="price" min="0" step="1" value="{{ book.price }}" />
+        </label>
+        <label class="admin-field admin-field--compact admin-field--stock">
+          <span>Stock</span>
+          <span class="admin-stock-stepper">
+            <button type="button" class="admin-stock-stepper__button" data-stock-step="-1" aria-label="Decrease stock for {{ book.title }}" title="Decrease stock">
+              <i class="icon-minus"></i>
+            </button>
+            <input type="number" name="stock" min="0" step="1" value="{{ book.stock }}" inputmode="numeric" aria-label="Stock quantity for {{ book.title }}" />
+            <button type="button" class="admin-stock-stepper__button" data-stock-step="1" aria-label="Increase stock for {{ book.title }}" title="Increase stock">
+              <i class="icon-plus"></i>
+            </button>
+          </span>
+        </label>
+        <label class="admin-field admin-field--compact">
+          <span>Condition</span>
+          <select name="condition">
+            {% for c in conditions %}
+              <option value="{{ c }}" {{ 'selected' if book.condition == c else '' }}>{{ c }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label class="admin-checkbox admin-checkbox--compact">
+          <input type="checkbox" name="is_featured" {{ 'checked' if book.is_featured else '' }} />
+          Featured
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn--primary">Save</button>
+    </div>
+  </form>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <i class="icon-boxes"></i>
+  <p>No books match this filter.</p>
+</div>
+{% endif %}
+{% endblock %}

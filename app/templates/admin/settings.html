@@ -1,0 +1,25 @@
+{% extends "admin/layout.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Settings</h1>
+  <p>These details appear across the storefront.</p>
+</div>
+
+<form method="post" class="admin-form">
+  {% for key, label in fields %}
+    <label class="admin-field">
+      <span>{{ label }}</span>
+      {% if key == 'store_tagline' %}
+        <textarea name="{{ key }}" rows="2">{{ values.get(key, '') }}</textarea>
+      {% else %}
+        <input type="text" name="{{ key }}" value="{{ values.get(key, '') }}" />
+      {% endif %}
+    </label>
+  {% endfor %}
+
+  <div class="admin-form-actions">
+    <button type="submit" class="btn btn--primary btn--lg">Save settings</button>
+  </div>
+</form>
+{% endblock %}

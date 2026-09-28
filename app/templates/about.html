@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block body_class %}page-about{% endblock %}
+
+{% block content %}
+<section class="about-hero">
+  <img src="{{ url_for('static', filename='images/about.jpg') }}" alt="Arranging books for delivery" loading="lazy" />
+</section>
+
+<section class="section about-story">
+  <h1>A travelling bookseller, not a chain store</h1>
+  <p>
+    {{ store_name }} started as a single crate of paperbacks on a folding table.
+    These days we travel with a carefully chosen collection, stocked with
+    whatever has found its way into our hands &mdash; secondhand
+    novels, forgotten poetry, essays with someone else's notes still in the
+    margins.
+  </p>
+  <p>
+    We keep ordering simple. If something catches your eye, message us on
+    WhatsApp, confirm your order, and we will arrange delivery.
+  </p>
+</section>
+
+<section class="section section--muted about-details">
+  <div class="about-details__card">
+      <i class="icon-truck"></i>
+    <div>
+        <h3>Delivery</h3>
+        <p>{{ delivery_info }}</p>
+    </div>
+  </div>
+  <div class="about-details__card">
+      <i class="icon-book-open"></i>
+    <div>
+        <h3>Browse anytime</h3>
+        <p>Explore the collection online and message us when you are ready to order.</p>
+    </div>
+  </div>
+  <div class="about-details__card">
+    <i class="icon-message-circle"></i>
+    <div>
+        <h3>Order on WhatsApp</h3>
+        <p>Tell us what you would like and we will confirm availability and delivery.</p>
+    </div>
+  </div>
+</section>
+
+<section class="callout">
+  <div class="callout__inner">
+    <i class="icon-message-circle callout__icon"></i>
+    <h2>Say hello</h2>
+    <p>Ask about a title, place an order, or check delivery availability.</p>
+    <a href="https://wa.me/{{ whatsapp_number }}" target="_blank" rel="noopener" class="btn btn--accent btn--lg">
+      Message us on WhatsApp
+    </a>
+  </div>
+</section>
+{% endblock %}
